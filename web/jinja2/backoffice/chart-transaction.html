@@ -1,0 +1,465 @@
+{%extends "backoffice/base.html"%}
+
+{%block title%}
+<title>Chart Transaction</title>
+{%endblock%}
+{%block name_navbar%}
+Chart Transaction
+{%endblock%}
+
+{%block content%}
+
+<div class="content">
+    <div class="row">
+        <div class="col-md-12 col-lg-12">
+            <div class="box">
+                <div class="box-body">
+                    <div class="row margin-top-30">
+
+                        <form method="get" class="col-xl-12 col-md-12 col-12 row" action=""
+                            id="form-filter-transaction-period">
+                            <div class="col-xl-6 col-md-6 col-6 nopad">
+                                <div class="form-group">
+                                    <label for="spending">Spending :</label>
+                                    <select name="filter_spending" id="spending" class="form-control">
+                                        <option value="" {% if filter_spending=="" %}selected{% endif %}>Pilih salah
+                                            satu</option>
+                                        <option value="all" {% if filter_spending=="all" %}selected{% endif %}>All
+                                            Spending</option>
+                                        {% for spending in list_spending %}
+                                        <option value="{{ spending.id }}" {% if filter_spending|int==spending.id
+                                            %}selected{% endif %}>{{ spending.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            {#<div class="col-xl-6 col-md-6 col-6">
+                                <div class="form-group">
+                                    <label for="weekly_expenses">Weekly Expenses :</label>
+                                    <select name="filter_weekly_expenses" id="weekly_expenses" class="form-control">
+                                        <option value="" {% if filter_weekly_expenses=="" %}selected{% endif %}>
+                                            Pilih
+                                            salah
+                                            satu</option>
+                                        <option value="all" {% if filter_weekly_expenses=="all" %}selected{% endif %}>
+                                            All
+                                            Spending</option>
+                                        {% for weekly_expenses in list_weekly_expenses %}
+                                        <option value="{{ weekly_expenses.id }}" {% if
+                                            filter_weekly_expenses|int==weekly_expenses.id %}selected{% endif %}>{{
+                                            weekly_expenses.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>#}
+                            <!-- /.col -->
+
+                            <!-- fix for small devices only -->
+                            <div class="clearfix visible-sm-block"></div>
+
+                            <div class="col-xl-12 col-md-12 col-12">
+                                <input type="hidden" name="filter_data_transaction"
+                                    value="{{ filter_data_transaction }}">
+                                <button type="submit" class="btn btn-app bg-navy">
+                                    Apply
+                                </button>
+                                <a href="{{ url('backoffice-chart-transaction') }}" class="btn btn-app bg-purple">
+                                    Reset
+                                </a>
+                            </div>
+                        </form>
+
+                    </div>
+                    {% set class_chart_today = "" %}
+                    {% set class_chart_week = "" %}
+                    {% set class_chart_month = "" %}
+                    {% set class_chart_select_date = "" %}
+
+                    {% if filter_data_transaction == '1' %}
+                    {% set class_chart_today = "active" %}
+                    {% elif filter_data_transaction == '2' %}
+                    {% set class_chart_week = "active" %}
+                    {% elif filter_data_transaction == '3' %}
+                    {% set class_chart_month = "active" %}
+                    {% elif filter_data_transaction == '4' %}
+                    {% set class_chart_select_date = "active" %}
+                    {% endif %}
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-pills margin-bottom margin-top-10">
+                        <li class="nav-item">
+                            <a class="nav-link {{ class_chart_today }}"
+                                href="{{ url('backoffice-chart-transaction') }}?filter_spending={{ filter_spending }}&filter_data_transaction=1">
+                                Today
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ class_chart_week }}"
+                                href="{{ url('backoffice-chart-transaction') }}?filter_spending={{ filter_spending }}&filter_data_transaction=2">
+                                This Week
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ class_chart_month }}"
+                                href="{{ url('backoffice-chart-transaction') }}?filter_spending={{ filter_spending }}&filter_data_transaction=3">
+                                This Month
+                            </a>
+                        </li>
+                        {#<li class="nav-item">
+                            <a class="nav-link {{ class_chart_select_date }}"
+                                href="{{ url('backoffice-chart-transaction') }}?filter_spending={{ filter_spending }}&filter_data_transaction=4">
+                                Select Date
+                            </a>
+                        </li>#}
+                    </ul>
+                    {#<div id="navpills-4" class="tab-panel {{ class_chart_select_date }}">
+                        <form method="get" action="{{ url('backoffice-chart-transaction') }}" id="form-filter-date">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <!-- Date -->
+                                    <div class="form-group">
+                                        <label for="filter_start_date">From : <span class="text-danger">*</span></label>
+                                        <div class="input-group date popupdate">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input type="text" name="filter_start_date" id="filter_start_date"
+                                                class="form-control pull-right validate[required]"
+                                                value="{{ filter_start_date }}" autocomplete="off">
+                                        </div>
+                                        <!-- /.input group -->
+                                    </div>
+                                    <!-- /.form group -->
+                                </div>
+                                <div class="col-md-4">
+                                    <!-- Date -->
+                                    <div class="form-group">
+                                        <label for="filter_end_date">To : <span class="text-danger">*</span></label>
+                                        <div class="input-group date popupdate">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input type="text" name="filter_end_date"
+                                                class="form-control pull-right validate[required]"
+                                                value="{{ filter_end_date }}" id="filter_end_date" autocomplete="off">
+                                        </div>
+                                        <!-- /.input group -->
+                                    </div>
+                                    <!-- /.form group -->
+                                </div>
+                                <div class="col-md-4 col-12">
+                                    <input type="hidden" name="filter_data_transaction"
+                                        value="{{ filter_data_transaction }}">
+                                    <button type="submit" class="btn btn-app bg-navy">
+                                        Apply
+                                    </button>
+                                    <a href="{{ url('backoffice-chart-transaction') }}?filter_data_transaction=4"
+                                        class="btn btn-app bg-purple">
+                                        Reset
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>#}
+                    <div class="tab-content">
+                        <div id="navpills-1" class="tab-pane {{ class_chart_today }} >
+                            <div class=" row">
+                            <div class="col-xl-9 col-md-9 col-12">
+                                <!-- AREA CHART -->
+                                <div class="box">
+                                    <div class="box-header with-border">
+                                        <h3 class="box-title">Area Chart</h3>
+                                    </div>
+                                    <div class="box-body">
+                                        <div class="chart" id="bar-chart" style="height:250px">
+                                            <canvas id="areaChart" style="height:250px"></canvas>
+                                        </div>
+                                    </div>
+                                    <!-- /.box-body -->
+                                </div>
+                                <!-- /.box -->
+                            </div>
+                        </div>
+
+                        <div id="navpills-2" class="tab-pane {{ class_chart_week }}">
+                            <div class="row">
+                                <div class="col-xl-9 col-md-9 col-12">
+                                    <!-- AREA CHART -->
+                                    <div class="box">
+                                        <div class="box-header with-border">
+                                            <h3 class="box-title">Area Chart</h3>
+                                        </div>
+                                        <div class="box-body">
+                                            <div class="chart" id="bar-chart-week" style="height:250px">
+                                                <canvas id="areaChartWeek" style="height:250px"></canvas>
+                                            </div>
+                                        </div>
+                                        <!-- /.box-body -->
+                                    </div>
+                                    <!-- /.box -->
+                                </div>
+                            </div>
+                        </div>
+                        <div id="navpills-3" class="tab-pane {{ class_chart_month }}">
+                            <div class="row">
+                                <div class="col-xl-9 col-md-9 col-12">
+                                    <!-- AREA CHART -->
+                                    <div class="box">
+                                        <div class="box-header with-border">
+                                            <h3 class="box-title">Area Chart</h3>
+                                        </div>
+                                        <div class="box-body">
+                                            <div class="chart" id="bar-chart-month" style="height:250px">
+                                                <canvas id="areaChartMonth" style="height:250px"></canvas>
+                                            </div>
+                                        </div>
+                                        <!-- /.box-body -->
+                                    </div>
+                                    <!-- /.box -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{%endblock%}
+{% block script_custom %}
+
+<script>
+    var spending = "{{filter_spending|safe}}";
+    var chart_spending_today = {{ list_chart_spending_today.chart| safe }};
+    var label_spending_today = {{ list_chart_spending_today.label| safe }};
+    var chart_spending_week = {{ list_chart_spending_week.chart| safe }};
+    var label_spending_week = {{ list_chart_spending_week.label| safe }};
+    var chart_spending_month = {{ list_chart_spending_month.chart| safe }};
+    var label_spending_month = {{ list_chart_spending_month.label| safe }};
+    var chart_transaction_today = {{ list_transaction_period_today.dataset| safe }};
+    var label_transaction_today = {{ list_transaction_period_today.label| safe }};
+    var chart_transaction_week = {{ list_transaction_period_week.dataset| safe }};
+    var label_transaction_week = {{ list_transaction_period_week.label| safe }};
+    var chart_transaction_month = {{ list_transaction_period_month.dataset| safe }};
+    var label_transaction_month = {{ list_transaction_period_month.label| safe }};
+
+    var data_transaction = "{{filter_data_transaction|safe}}";
+
+</script>
+<script type="text/javascript">
+    function addCommas(nStr) {
+        nStr += '';
+        x = nStr.split('.');
+        x1 = x[0];
+        x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + ',' + '$2');
+        }
+        return x1 + x2;
+    }
+
+    var $ = jQuery.noConflict();
+    $(document).ready(function () {
+        var areaChartData = {
+            labels: label_transaction_today,
+            datasets: [
+                {
+                    label: 'Sales',
+                    fillColor: 'rgba(30,172,190,0.3)',
+                    strokeColor: 'rgba(30,172,190,0)',
+                    pointColor: 'rgba(30,172,190,0.5)',
+                    pointStrokeColor: '#1eacbe',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(30,172,190,1)',
+                    data: chart_transaction_today
+                },
+                //  {
+                //      label               : 'Digital Goods',
+                //      fillColor           : 'rgba(38,198,218,0.7)',
+                //      strokeColor         : 'rgba(38,198,218,0)',
+                //      pointColor          : '#06d79c',
+                //      pointStrokeColor    : 'rgba(38,198,218,0.5)',
+                //      pointHighlightFill  : '#fff',
+                //      pointHighlightStroke: 'rgba(38,198,218,1)',
+                //      data                : [8, 3, 4, 14, 13, 5, 17, 24, 24, 45, 27, 20, 28, 13, 34, 48, 31, 50]
+                //  }
+            ]
+        }
+
+        var areaChartOptions = {
+            //Boolean - If we should show the scale at all
+            showScale: true,
+            //Boolean - Whether grid lines are shown across the chart
+            scaleShowGridLines: false,
+            //String - Colour of the grid lines
+            scaleGridLineColor: 'rgba(0,0,0,.05)',
+            //Number - Width of the grid lines
+            scaleGridLineWidth: 1,
+            //Boolean - Whether to show horizontal lines (except X axis)
+            scaleShowHorizontalLines: true,
+            //Boolean - Whether to show vertical lines (except Y axis)
+            scaleShowVerticalLines: true,
+            //Boolean - Whether the line is curved between points
+            bezierCurve: true,
+            //Number - Tension of the bezier curve between points
+            bezierCurveTension: 0.5,
+            //Boolean - Whether to show a dot for each point
+            pointDot: true,
+            //Number - Radius of each point dot in pixels
+            pointDotRadius: 1,
+            //Number - Pixel width of point dot stroke
+            pointDotStrokeWidth: 1,
+            //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+            pointHitDetectionRadius: 20,
+            //Boolean - Whether to show a stroke for datasets
+            datasetStroke: true,
+            //Number - Pixel width of dataset stroke
+            datasetStrokeWidth: 0,
+            //Boolean - Whether to fill the dataset with a color
+            datasetFill: true,
+            tooltipTemplate: "<%= addCommas(value) %>",
+            //Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+            maintainAspectRatio: true,
+            //Boolean - whether to make the chart responsive to window resizing
+            responsive: true
+        };
+
+        // Chart Week
+        var areaChartDataWeek = {
+            labels: label_transaction_week,
+            datasets: [
+                {
+                    label: 'Sales',
+                    fillColor: 'rgba(30,172,190,0.3)',
+                    strokeColor: 'rgba(30,172,190,0)',
+                    pointColor: 'rgba(30,172,190,0.5)',
+                    pointStrokeColor: '#1eacbe',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(30,172,190,1)',
+                    data: chart_transaction_week
+                }
+            ]
+        }
+
+        var areaChartOptionsWeek = {
+            showScale: true,
+            scaleShowGridLines: false,
+            scaleGridLineColor: 'rgba(0,0,0,.05)',
+            scaleGridLineWidth: 1,
+            scaleShowHorizontalLines: true,
+            scaleShowVerticalLines: true,
+            bezierCurve: true,
+            bezierCurveTension: 0.5,
+            pointDot: true,
+            pointDotRadius: 1,
+            pointDotStrokeWidth: 1,
+            pointHitDetectionRadius: 20,
+            datasetStroke: true,
+            datasetStrokeWidth: 0,
+            datasetFill: true,
+            tooltipTemplate: "<%= addCommas(value) %>",
+            maintainAspectRatio: true,
+            responsive: true
+        };
+
+        // Chart Month
+        var areaChartDataMonth = {
+            labels: label_transaction_month,
+            datasets: [
+                {
+                    label: 'Sales',
+                    fillColor: 'rgba(30,172,190,0.3)',
+                    strokeColor: 'rgba(30,172,190,0)',
+                    pointColor: 'rgba(30,172,190,0.5)',
+                    pointStrokeColor: '#1eacbe',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(30,172,190,1)',
+                    data: chart_transaction_month
+                }
+            ]
+        }
+
+        var areaChartOptionsMonth = {
+            showScale: true,
+            scaleShowGridLines: false,
+            scaleGridLineColor: 'rgba(0,0,0,.05)',
+            scaleGridLineWidth: 1,
+            scaleShowHorizontalLines: true,
+            scaleShowVerticalLines: true,
+            bezierCurve: true,
+            bezierCurveTension: 0.5,
+            pointDot: true,
+            pointDotRadius: 1,
+            pointDotStrokeWidth: 1,
+            pointHitDetectionRadius: 20,
+            datasetStroke: true,
+            datasetStrokeWidth: 0,
+            datasetFill: true,
+            tooltipTemplate: "<%= addCommas(value) %>",
+            maintainAspectRatio: true,
+            responsive: true
+        };
+
+        if (data_transaction == '1') {
+            if (spending == 'all') {
+                var bar = new Morris.Bar({
+                    element: 'bar-chart',
+                    resize: true,
+                    data: chart_spending_today,
+                    barColors: ['#745af2', '#ef5350'],
+                    barSizeRatio: 0.5,
+                    barGap: 5,
+                    xkey: 'y',
+                    ykeys: ['a'],
+                    labels: label_spending_today,
+                    hideHover: 'auto'
+                });
+            } else {
+                var ctx = document.getElementById("areaChart").getContext("2d");
+                window.myLine = new Chart(ctx).Line(areaChartData, areaChartOptions);
+            }
+        };
+        if (data_transaction == '2') {
+            if (spending == 'all') {
+                var bar = new Morris.Bar({
+                    element: 'bar-chart-week',
+                    resize: true,
+                    data: chart_spending_week,
+                    barColors: ['#745af2', '#ef5350'],
+                    barSizeRatio: 0.5,
+                    barGap: 5,
+                    xkey: 'y',
+                    ykeys: ['a'],
+                    labels: label_spending_week,
+                    hideHover: 'auto'
+                });
+            } else {
+                var ctx2 = document.getElementById("areaChartWeek").getContext("2d");
+                window.myLineWeek = new Chart(ctx2).Line(areaChartDataWeek, areaChartOptionsWeek);
+            }
+        };
+        if (data_transaction == '3') {
+            if (spending == 'all') {
+                var bar = new Morris.Bar({
+                    element: 'bar-chart-month',
+                    resize: true,
+                    data: chart_spending_month,
+                    barColors: ['#745af2', '#ef5350'],
+                    barSizeRatio: 0.5,
+                    barGap: 5,
+                    xkey: 'y',
+                    ykeys: ['a'],
+                    labels: label_spending_month,
+                    hideHover: 'auto'
+                });
+            }
+            else {
+                var ctx3 = document.getElementById("areaChartMonth").getContext("2d");
+                window.myLineMonth = new Chart(ctx3).Line(areaChartDataMonth, areaChartOptionsMonth);
+            }
+        };
+
+    });
+</script>
+{%endblock%}

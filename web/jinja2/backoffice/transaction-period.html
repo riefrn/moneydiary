@@ -1,0 +1,212 @@
+{%extends "backoffice/base.html"%}
+
+{%block title%}
+<title>List Total Spending {{desc_list_transaction}}</title>
+{%endblock%}
+{%block name_navbar%}
+List Total Spending {{desc_list_transaction}}
+{%endblock%}
+
+{%block content%}
+
+<div class="content">
+    <div class="row">
+        <div class="col-md-12 col-lg-12">
+            <div class="box">
+                <div class="box-body">
+                    <div class="row margin-top-30">
+
+                        <form method="get" class="col-xl-12 col-md-12 col-12 row" action=""
+                            id="form-filter-transaction-period">
+                            <div class="col-xl-6 col-md-6 col-6 nopad">
+                                <div class="form-group">
+                                    <label for="spending">Spending :</label>
+                                    <select name="filter_spending" id="spending" class="form-control">
+                                        <option value="" {% if filter_spending=="" %}selected{% endif %}>Pilih salah
+                                            satu</option>
+                                        <option value="all" {% if filter_spending=="all" %}selected{% endif %}>All
+                                            Spending</option>
+                                        {% for spending in list_spending %}
+                                        <option value="{{ spending.id }}" {% if filter_spending|int==spending.id
+                                            %}selected{% endif %}>{{ spending.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            {#<div class="col-xl-6 col-md-6 col-6">
+                                <div class="form-group">
+                                    <label for="weekly_expenses">Weekly Expenses :</label>
+                                    <select name="filter_weekly_expenses" id="weekly_expenses" class="form-control">
+                                        <option value="" {% if filter_weekly_expenses=="" %}selected{% endif %}>
+                                            Pilih
+                                            salah
+                                            satu</option>
+                                        <option value="all" {% if filter_weekly_expenses=="all" %}selected{% endif %}>
+                                            All
+                                            Spending</option>
+                                        {% for weekly_expenses in list_weekly_expenses %}
+                                        <option value="{{ weekly_expenses.id }}" {% if
+                                            filter_weekly_expenses|int==weekly_expenses.id %}selected{% endif %}>{{
+                                            weekly_expenses.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>#}
+                            <!-- /.col -->
+
+                            <!-- fix for small devices only -->
+                            <div class="clearfix visible-sm-block"></div>
+
+                            <div class="col-xl-12 col-md-12 col-12">
+                                <input type="hidden" name="filter_data_transaction"
+                                    value="{{ filter_data_transaction }}">
+                                <button type="submit" class="btn btn-success">
+                                    Apply
+                                </button>
+                                <a href="{{ url('backoffice-list-period-transaction') }}" class="btn btn-info">
+                                    Reset
+                                </a>
+                            </div>
+                        </form>
+
+                    </div>
+                    {% set class_chart_today = "" %}
+                    {% set class_chart_week = "" %}
+                    {% set class_chart_month = "" %}
+                    {% set class_chart_select_date = "" %}
+
+                    {% if filter_data_transaction == '1' %}
+                    {% set class_chart_today = "active" %}
+                    {% elif filter_data_transaction == '2' %}
+                    {% set class_chart_week = "active" %}
+                    {% elif filter_data_transaction == '3' %}
+                    {% set class_chart_month = "active" %}
+                    {% elif filter_data_transaction == '4' %}
+                    {% set class_chart_select_date = "active" %}
+                    {% endif %}
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-pills margin-bottom margin-top-10">
+                        <li class="nav-item">
+                            <a class="nav-link {{ class_chart_today }}"
+                                href="{{ url('backoffice-list-period-transaction') }}?filter_data_transaction=1">
+                                Today
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ class_chart_week }}"
+                                href="{{ url('backoffice-list-period-transaction') }}?filter_data_transaction=2">
+                                This Week
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ class_chart_month }}"
+                                href="{{ url('backoffice-list-period-transaction') }}?filter_data_transaction=3">
+                                This Month
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ class_chart_select_date }}"
+                                href="{{ url('backoffice-list-period-transaction') }}?filter_data_transaction=4">
+                                Select Date
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-4">
+                        <div id="navpills-4" class="tab-pane {{ class_chart_select_date }}">
+                            <form method="get" action="{{ url('backoffice-list-period-transaction') }}"
+                                id="form-filter-date">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <!-- Date -->
+                                        <div class="form-group">
+                                            <label for="filter_start_date">From : <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="input-group date popupdate">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="text" name="filter_start_date" id="filter_start_date"
+                                                    class="form-control pull-right validate[required]"
+                                                    value="{{ filter_start_date }}" autocomplete="off">
+                                            </div>
+                                            <!-- /.input group -->
+                                        </div>
+                                        <!-- /.form group -->
+                                    </div>
+                                    <div class="col-md-4">
+                                        <!-- Date -->
+                                        <div class="form-group">
+                                            <label for="filter_end_date">To : <span class="text-danger">*</span></label>
+                                            <div class="input-group date popupdate">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="text" name="filter_end_date"
+                                                    class="form-control pull-right validate[required]"
+                                                    value="{{ filter_end_date }}" id="filter_end_date"
+                                                    autocomplete="off">
+                                            </div>
+                                            <!-- /.input group -->
+                                        </div>
+                                        <!-- /.form group -->
+                                    </div>
+                                    <div class="col-md-4 col-12">
+                                        <input type="hidden" name="filter_data_transaction"
+                                            value="{{ filter_data_transaction }}">
+                                        <button type="submit" class="btn btn-success">
+                                            Apply
+                                        </button>
+                                        <a href="{{ url('backoffice-list-period-transaction') }}?filter_data_transaction=4"
+                                            class="btn btn-info">
+                                            Reset
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="table-responsive mt-4">
+                        <table id="example1" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name Spending</th>
+                                    <th>Total Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%for ltd in list_transaction_data%}
+                                <tr>
+                                    <td>{{loop.index}}</td>
+                                    <td>{{ltd.name}}</td>
+                                    <td>{{ltd.desc_total_price}}</td>
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <div class="row col-12">
+                        <h3>
+                            Grand Total
+                        </h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-4 col-md-4 col-8 ">
+                            <div class="box box-body bg-info text-white">
+                                {%for ltd in list_transaction_data%}
+                                {%if loop.last%}
+                                <div class="flexbox">
+                                    <span style="font-size:40px"">{{ltd.desc_grand_total_spending}}</span>
+                                </div>
+                                {%endif%}
+                                {%endfor%}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

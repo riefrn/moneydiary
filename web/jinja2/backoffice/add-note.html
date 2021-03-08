@@ -1,0 +1,48 @@
+{%extends "backoffice/base.html"%}
+
+{%block title%}
+<title>Add Note</title>
+{%endblock%}
+{%block name_navbar%}
+Add Note
+{%endblock%}
+
+{%block content%}
+
+<div class="content">
+    <div class="col-md-12">
+        <div class="card card-user mr-4">
+            <!-- form start -->
+            <form role="form" method="post" action="{{url('backoffice-add-note')}}" id="form-add-note"
+                enctype="multipart/form-data">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="title">Title *</label>
+                        <textarea type="title" id="title" class="form-control validate[required]" name="title"
+                            rows="5"></textarea>
+                    </div>
+
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary btn_add_slider">Submit</button>
+                    <a href="{{ url('backoffice-list-note') }}" class="btn btn-danger float-right">List Note</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var $ = jQuery.noConflict();
+
+    // $(document).ready(function () {
+    //     CKEDITOR.replace('body');
+    // });
+    $(document).ready(function () {
+        CKEDITOR.replace('title');
+    });
+</script>
+
+{%endblock%}

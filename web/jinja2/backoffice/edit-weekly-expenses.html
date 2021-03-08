@@ -1,0 +1,51 @@
+{%extends "backoffice/base.html"%}
+
+{%block title%}
+<title>Edit Weekly Expenses</title>
+{%endblock%}
+{%block name_navbar%}
+Edit Weekly Expenses
+{%endblock%}
+
+{%block content%}
+
+<div class="content">
+    <div class="col-md-12">
+        <div class="card card-user mr-4">
+            <!-- form start -->
+            <form role="form" method="post"
+                action="{{ url('backoffice-edit-weekly-expenses', args=[weekly_expenses_id]) }}"
+                id="form-edit-weekly-expenses">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="name">Name *</label>
+                        <input type="name" id="name" name="name" class="form-control validate[required, maxSize[100]]"
+                            maxlength="100" value="{{list_weekly_expenses.name}}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="spending">Spending *</label>
+                        <div>
+                            <select name="spending" id="spending" class="form-control validate[required]">
+                                <option value="">Pilih salah satu</option>
+                                {% for spending in list_spending %}
+                                <option value="{{ spending.id }}" {% if spending.id==list_weekly_expenses.spending_id
+                                    %}selected{% endif %}>
+                                    {{ spending.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary btn_add_slider">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{%endblock%}

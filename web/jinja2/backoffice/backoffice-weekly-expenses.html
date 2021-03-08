@@ -1,0 +1,96 @@
+{%extends "backoffice/base.html"%}
+
+{%block title%}
+<title>List Weekly Expenses</title>
+{%endblock%}
+{%block name_navbar%}
+List Weekly Expenses
+{%endblock%}
+
+{%block content%}
+
+<div class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table id="example1" class="table table-striped table-bordered" style="width:150%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Spending</th>
+                                    <th>Created Date</th>
+                                    <th>Updated Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%for lwe in list_weekly_expenses%}
+                                <tr>
+                                    <td>{{loop.index}}</td>
+                                    <td>{{lwe.name}}</td>
+                                    <td>{{lwe.spending_name}}</td>
+                                    <td>{{lwe.desc_created_date}}</td>
+                                    <td>{{lwe.desc_updated_date}}</td>
+                                    <td>
+                                        <a href="{{ url('backoffice-edit-weekly-expenses', args=[lwe.id]) }}"><i
+                                                class="fa fa-pencil"></i></i></a>&nbsp;
+                                        <a href="#" data-whatever="{{ lwe.id }}" data-toggle="modal"
+                                            data-target="#confirm-delete-slider"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <a href="{{ url('backoffice-add-weekly-expenses') }}" class="btn btn-primary">Add Weekly
+                Expenses</a>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="confirm-delete-slider" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Konfirmasi</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure want to delete weekly expenses?</p>
+            </div>
+            <div class="modal-footer">
+                <form method="post" action="{{ url('backoffice-delete-weekly-expenses') }}">
+                    <input type="hidden" name="weekly_expenses_id" id="weekly_expenses_id">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger btn-ok">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var $ = jQuery.noConflict();
+
+    $(document).ready(function () {
+        $('#confirm-delete-slider').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var recipient = button.data('whatever');
+            console.log(recipient);
+            console.log("masuk");
+            var modal = $(this);
+            modal.find('.modal-footer #weekly_expenses_id').val(recipient);
+        });
+
+    });
+
+</script>
+{%endblock%}

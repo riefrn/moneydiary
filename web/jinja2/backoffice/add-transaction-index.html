@@ -1,0 +1,61 @@
+{%extends "backoffice/base.html"%}
+
+{%block title%}
+<title>Add Transaction</title>
+{%endblock%}
+{%block name_navbar%}
+Add Transaction
+{%endblock%}
+
+{%block content%}
+
+<div class="content">
+    <div class="col-md-12">
+        <div class="card card-user mr-4">
+            <!-- form start -->
+            <form role="form" method="post" action="{{ url('backoffice-add-transaction-index', args=[spending_id]) }}"
+                id="form-add-transaction-index">
+                <div class="card-body">
+                    {%if list_spending.name !=''%}
+                    <div class="form-group">
+                        <label for="spending">Spending *</label>
+                        <input type="text" id="spending" class="form-control" name="spending"
+                            value="{{list_spending.name}}" readonly>
+                    </div>
+                    {%endif%}
+                    <div class="form-group">
+                        <label for="weekly_expenses">Expense Category*</label>
+                        <div>
+                            <select name="weekly_expenses" id="weekly_expenses" class="form-control validate[required]">
+                                <option value="">Pilih salah satu</option>
+                                {% for lwe in list_weekly_expenses %}
+                                <option value="{{ lwe.id }}">
+                                    {{ lwe.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="item">Item *</label>
+                        <input type="item" id="item" class="form-control validate[required, maxSize[100]]" name="item"
+                            maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price *</label>
+                        <input type="number" min="0" id="price" class="form-control validate[required, maxSize[100]]"
+                            name="price" maxlength="100">
+                    </div>
+
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary btn_add_slider">Submit</button>
+                    <a href="{{ url('index') }}" class="btn btn-danger float-right">Home</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{%endblock%}

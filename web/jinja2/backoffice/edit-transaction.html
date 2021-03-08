@@ -1,0 +1,69 @@
+{%extends "backoffice/base.html"%}
+
+{%block title%}
+<title>Edit Transaction</title>
+{%endblock%}
+{%block name_navbar%}
+Edit Transaction
+{%endblock%}
+
+{%block content%}
+
+<div class="content">
+    <div class="col-md-12">
+        <div class="card card-user mr-4">
+            <!-- form start -->
+            <form role="form" method="post" action="{{ url('backoffice-edit-transaction', args=[transaction_id]) }}"
+                id="form-edit-transaction">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="item">Item *</label>
+                        <input type="item" id="item" name="item" class="form-control validate[required, maxSize[100]]"
+                            maxlength="100" value="{{list_transaction.item}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price *</label>
+                        <input type="number" min="0" id="price" name="price"
+                            class="form-control validate[required, maxSize[100]]" maxlength="100"
+                            value="{{list_transaction.price}}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="spending">Spending *</label>
+                        <div>
+                            <select name="spending" id="spending" class="form-control validate[required]">
+                                <option value="">Pilih salah satu</option>
+                                {% for spending in list_spending %}
+                                <option value="{{ spending.id }}" {% if spending.id==list_transaction.spending_id
+                                    %}selected{% endif %}>
+                                    {{ spending.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="weekly_expenses">Weekly Expenses *</label>
+                        <div>
+                            <select name="weekly_expenses" id="weekly_expenses" class="form-control validate[required]">
+                                <option value="">Pilih salah satu</option>
+                                {% for weekly_expenses in list_weekly_expenses %}
+                                <option value="{{ weekly_expenses.id }}" {% if
+                                    weekly_expenses.id==list_transaction.weekly_expenses_id %}selected{% endif %}>
+                                    {{ weekly_expenses.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary btn_add_slider">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{%endblock%}
